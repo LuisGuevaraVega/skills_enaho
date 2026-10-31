@@ -76,8 +76,10 @@ def correr(i: int, pedido: str, con_skills: bool) -> dict:
             if ev.get("type") == "result":
                 res["respuesta"] = ev.get("result", "")
 
-        for png in [*carpeta.glob("figuras/*.png"), *carpeta.glob("mapas/*.png")]:
-            shutil.copy2(png, SALIDA / f"{modo}_{i}_{png.name}")
+        # Sin skills, Claude elige dónde guardar las figuras: se buscan en toda la copia.
+        for png in carpeta.rglob("*.png"):
+            if ".venv" not in png.parts:
+                shutil.copy2(png, SALIDA / f"{modo}_{i}_{png.name}")
     except subprocess.TimeoutExpired:
         res["error"] = f"sin respuesta en {TIMEOUT // 60} minutos"
     except Exception as e:  # una corrida que falla no debe tumbar las demás
