@@ -1,7 +1,9 @@
 # Evaluación de las skills
 
 Tres pedidos, cada uno con y sin skills, en una copia limpia del repositorio (con `datos/`,
-sin `salidas/`), para comprobar que las skills se activen solas y se encadenen.
+sin `salidas/`), para comprobar que las skills se activen solas y se encadenen. La copia
+«sin skills» además no lleva `.claude/`, para que Claude no pueda leer las skills ni sus
+respuestas esperadas con Read o Grep.
 
 ```bash
 claude -p "Haz un mapa de la pobreza por departamento con la ENAHO 2024"                            # con skills

@@ -33,15 +33,29 @@ URL_GEOJSON = (
 DATOS = Path("datos")
 
 
+def valido(path: Path) -> bool:
+    """Un .zip a medias o una página de error del INEI no cuentan como descarga."""
+    if not path.exists() or path.stat().st_size == 0:
+        return False
+    return path.suffix != ".zip" or zipfile.is_zipfile(path)
+
+
 def bajar(url: str, destino: Path, forzar: bool) -> None:
-    if destino.exists() and destino.stat().st_size > 0 and not forzar:
+    if valido(destino) and not forzar:
         print(f"ya existe   {destino}")
         return
     print(f"descargando {url}")
     tmp = destino.with_suffix(destino.suffix + ".part")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=300) as r, open(tmp, "wb") as f:
-        shutil.copyfileobj(r, f)
+    try:
+        with urllib.request.urlopen(req, timeout=300) as r, open(tmp, "wb") as f:
+            shutil.copyfileobj(r, f)
+    except (urllib.error.URLError, TimeoutError) as e:
+        tmp.unlink(missing_ok=True)
+        sys.exit(f"ERROR: no se pudo descargar {url}: {e}. Revisa el año, el --codigo o la conexión.")
+    if destino.suffix == ".zip" and not zipfile.is_zipfile(tmp):
+        tmp.unlink()
+        sys.exit(f"ERROR: {url} no devolvió un zip válido. Revisa el año o el --codigo.")
     tmp.replace(destino)
     print(f"guardado    {destino} ({destino.stat().st_size / 1e6:.1f} MB)")
 

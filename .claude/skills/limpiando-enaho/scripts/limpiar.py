@@ -131,15 +131,19 @@ def main() -> int:
         f"RESULTADO: {'VALIDADA' if ok else 'NO VALIDADA, no usar la base'}",
     ]
 
-    # 7. Guardar.
+    # 7. Guardar: la validación siempre; la base solo si pasó, para que nadie use una base mala.
     SALIDAS.mkdir(exist_ok=True)
-    base = base.drop(columns="_merge")
-    base.to_parquet(SALIDAS / f"personas_{anio}.parquet", index=False)
     texto = "\n".join(lineas) + "\n"
     (SALIDAS / "validacion.txt").write_text(texto, encoding="utf-8")
     print(texto)
-    print(f"Base guardada en {SALIDAS / f'personas_{anio}.parquet'}")
-    return 0 if ok else 1
+    destino = SALIDAS / f"personas_{anio}.parquet"
+    if not ok:
+        destino.unlink(missing_ok=True)
+        print(f"No se guardó {destino}: la validación falló.")
+        return 1
+    base.drop(columns="_merge").to_parquet(destino, index=False)
+    print(f"Base guardada en {destino}")
+    return 0
 
 
 if __name__ == "__main__":
