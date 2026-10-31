@@ -94,3 +94,7 @@ se usa `facpob07`. Con `facpob07` en toda la base, la pobreza nacional da 27.53 
 
 [`evaluacion.md`](evaluacion.md) compara los tres pedidos de la sesión con y sin skills
 (`claude -p` y `claude -p --disallowedTools Skill`). `uv run evaluar.py` los corre todos.
+
+## Licencia
+
+[MIT](LICENSE)
