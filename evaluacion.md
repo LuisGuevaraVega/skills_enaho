@@ -15,7 +15,7 @@ claude -p --disallowedTools Skill "Haz un mapa de la pobreza por departamento co
 
 ## Resultados
 
-| # | Pedido | Modo | Skills activadas | Cifra | ¿Ponderó? | Figura | Tiempo · turnos · costo |
+| # | Pedido | Modo | Skills activadas | Cifra | ¿Ponderó? | Figura | Tiempo · turnos · costo API estimado* |
 |---|---|---|---|---|---|---|---|
 | 1 | ¿Cuál fue la pobreza en Cusco en 2024? | con | limpiando-enaho | 18.5 % ✓ | sí, `factor07 × mieperho` | — | 50 s · 8 · $0.22 |
 | 1 | | sin | — | 18.5 % ✓ | sí, `factor07 × mieperho` | — | 38 s · 4 · $0.23 |
@@ -23,6 +23,10 @@ claude -p --disallowedTools Skill "Haz un mapa de la pobreza por departamento co
 | 2 | | sin | — | 24.8 % y 39.3 % ✓ | sí | `resultados/…png`, diseño propio | 66 s · 10 · $0.25 |
 | 3 | Haz un mapa de la pobreza por departamento | con | mapeando-enaho → limpiando-enaho | Cajamarca 45.0 %, Ica 6.0 % ✓ | sí | `mapas/pobreza_departamento.png`, 25 con dato | 51 s · 9 · $0.26 |
 | 3 | | sin | — | Cajamarca 45.0 %, Ica 6.0 % ✓ | sí | `resultados/…png`, diseño propio | 96 s · 13 · $0.51 |
+
+\* Estimación que reporta `claude -p` de lo que costaría cada corrida pagando por uso con la
+API de Anthropic. Con una suscripción de claude.ai (Pro o Max) no se cobra: solo consume el
+límite de uso del plan. Sirve para comparar cuánto trabajo necesitó cada corrida.
 
 Figuras de las corridas con skills: [`evaluacion/con_2_pobre_por_area_2024.png`](evaluacion/con_2_pobre_por_area_2024.png)
 y [`evaluacion/con_3_pobreza_departamento.png`](evaluacion/con_3_pobreza_departamento.png).
@@ -44,7 +48,8 @@ versión de `evaluar.py` de esa corrida solo copiaba `figuras/` y `mapas/` (ya c
     habituales, unión `m:1`, llaves con ceros); el pedido 3 directamente no usó el módulo 200.
   - **Diseño:** sin skills, el formato del gráfico y del mapa depende de cada corrida; con
     skills, barras desde cero, un color, escala de un tono desde 0 y fuente al pie son fijos.
-  - **Costo:** el mapa sin skills costó el doble ($0.51 contra $0.26) y tardó casi el doble
-    (96 s contra 51 s), porque tuvo que escribir y depurar su propio código.
+  - **Esfuerzo:** el mapa sin skills necesitó el doble de trabajo (costo API estimado de
+    $0.51 contra $0.26) y casi el doble de tiempo (96 s contra 51 s), porque tuvo que
+    escribir y depurar su propio código.
 - Sin skills, el pedido 3 agregó por su cuenta intervalos de confianza con el diseño muestral,
   algo que las skills no hacen. Es una mejora posible para `mapeando-enaho`.
